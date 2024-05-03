@@ -1,0 +1,9 @@
+data/
+
+venv/
+dist/
+
+__pycache__/
+.vscode/
+*.code-workspace
+*.log

@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "bangumi-cli"
+version = "0.2.1"
+description = "A CLI for bangumi.tv"
+authors = ["iucario <16816842+iucario@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "bangumi_cli"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+typer = {extras = ["all"], version = "^0.7.0"}
+pick = "^2.2.0"
+pyyaml = "^6.0"
+requests = "^2.28.1"
+toml = "^0.10.2"
+
+[tool.poetry.scripts]
+bgm = "bangumi_cli.cli:app"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.yapf]
+based_on_style = "google"
+column_limit = 120
+indent_width = 4
