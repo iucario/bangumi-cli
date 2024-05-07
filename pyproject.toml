@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bangumi-cli"
-version = "0.2.1"
+version = "0.2.2"
 description = "A CLI for bangumi.tv"
 authors = ["iucario <16816842+iucario@users.noreply.github.com>"]
 readme = "README.md"

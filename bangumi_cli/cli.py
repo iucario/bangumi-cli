@@ -343,12 +343,7 @@ def mark(collection_type: str = typer.Argument(default='watch',
 def add_collection(sub_id: int = typer.Argument(..., help='Subject ID')):
     client = get_client()
     sub = client.get_subject(sub_id)
-    try:
-        collection = client.get_user_collection(sub_id)
-        rich.print(f'[yellow]Subject {sub_id} already in collection[/yellow]',
-                   'Use [green]mark[/green] to edit collection')
-    except NotFoundError:
-        prompt_add_collection(client, sub)
+    prompt_add_collection(client, sub)
 
 
 @app.command(name='cal', help='Calendar')
