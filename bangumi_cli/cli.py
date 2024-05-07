@@ -13,7 +13,6 @@ from rich.table import Table
 from rich.text import Text
 
 from bangumi_cli import settings
-from bangumi_cli.api import NotFoundError
 from bangumi_cli.auth import load_token, wait_user_input
 from bangumi_cli.client import Client
 from bangumi_cli.types import Subject, UserCollection
@@ -316,27 +315,35 @@ def watch_latest_episode(subject_id: Optional[int] = typer.Argument(None, help='
 
 @app.command(name='edit', help="Edit collection. [edit|e]")
 @app.command(name='e', hidden=True)
-def mark(collection_type: str = typer.Argument(default='watch',
-                                               help='Collection type',
-                                               autocompletion=collection_type_complete_list,
-                                               callback=validate_collection_type)):
-
+def mark(subject_id: Optional[int] = typer.Argument(None, help='Subject ID'),
+         collection_type: str = typer.Option('watch',
+                                             '-s',
+                                             '--status',
+                                             help='Collection type',
+                                             autocompletion=collection_type_complete_list,
+                                             callback=validate_collection_type)):
+    """Edit subject by id if provided, otherwise prompt to choose from list."""
     client = get_client()
-    collections = client.get_collections(type=collection_type)
-    if not collections:
-        print_warning(f'No collections of type {collection_type}')
-        raise typer.Exit(1)
 
-    options = []
-    for collection in collections:
-        sub = collection['subject']
-        eps = collection['ep_status']
-        total = sub['eps']
-        options.append(f'[{eps}/{total}] {sub["name_cn"]} ({sub["name"]})')
-    title = 'Bookmark subject'
-    choice = pick.pick(options, title, indicator='>', default_index=0)
-    collection: UserCollection = collections[choice[1]]  # type: ignore
-    prompt_collection_options(client, collection)
+    if subject_id is not None:
+        collection = client.get_user_collection(subject_id)
+        prompt_collection_options(client, collection)
+    else:
+        collections = client.get_collections(type=collection_type)
+        if not collections:
+            print_warning(f'No collections of type {collection_type}')
+            raise typer.Exit(1)
+
+        options = []
+        for collection in collections:
+            sub = collection['subject']
+            eps = collection['ep_status']
+            total = sub['eps']
+            options.append(f'[{eps}/{total}] {sub["name_cn"]} ({sub["name"]})')
+        title = 'Bookmark subject'
+        choice = pick.pick(options, title, indicator='>', default_index=0)
+        collection: UserCollection = collections[choice[1]]  # type: ignore
+        prompt_collection_options(client, collection)
 
 
 @app.command(name='add', help='Add collection to your list')
