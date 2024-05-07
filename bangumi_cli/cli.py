@@ -13,6 +13,7 @@ from rich.table import Table
 from rich.text import Text
 
 from bangumi_cli import settings
+from bangumi_cli.api import NotFoundError
 from bangumi_cli.auth import load_token, wait_user_input
 from bangumi_cli.client import Client
 from bangumi_cli.types import Subject, UserCollection
@@ -348,9 +349,17 @@ def mark(subject_id: Optional[int] = typer.Argument(None, help='Subject ID'),
 
 @app.command(name='add', help='Add collection to your list')
 def add_collection(sub_id: int = typer.Argument(..., help='Subject ID')):
+    """If subject already collected, edit it to `watch` status. Otherwise add it. 
+    Don't get it wrong because user editted information will lost.
+    """
     client = get_client()
     sub = client.get_subject(sub_id)
-    prompt_add_collection(client, sub)
+    try:
+        collection = client.get_user_collection(sub_id)
+    except NotFoundError:
+        prompt_add_collection(client, sub)
+    else:
+        prompt_edit_collection(client, sub, 'watch')
 
 
 @app.command(name='cal', help='Calendar')
