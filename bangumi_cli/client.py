@@ -4,6 +4,7 @@ from bangumi_cli import api, collection
 from bangumi_cli.api import get_me, get_subject, get_user_collections, put_user_episode
 from bangumi_cli.auth import (Credential, get_access_token, get_token_status, load_token, refresh_access_token,
                               store_token)
+from bangumi_cli.base_logger import logger
 from bangumi_cli.types import Episode, PatchCollectionPayload, PostCollectionPayload, Subject, User, UserCollection
 
 
@@ -50,9 +51,10 @@ class Client:
         self._auth()
         status = get_token_status(self.credential['access_token'])
         if status is None:
-            return None
+            return 'expired'  # TODO: only an ad-hoc solution. Need to check the docs.
         expires: int = status['expires']
         if expires <= int(time.time()):
+            logger.info('Token expired, refreshing...')
             return 'expired'
         return 'ok'
 
