@@ -36,7 +36,7 @@ class Client:
         self.credential = get_access_token(code)
         store_token(self.credential)
 
-    def refresh_token(self):
+    def refresh_token(self) -> bool:
         """Refresh token if expired."""
         self._auth()
         new_credential = refresh_access_token(self.credential['refresh_token'])
@@ -46,7 +46,7 @@ class Client:
         store_token(self.credential)
         return True
 
-    def get_auth_status(self) -> None | str:
+    def get_auth_status(self) -> str:
         """Return None if not authenticated, 'expired' if token expired, 'ok' if valid."""
         self._auth()
         status = get_token_status(self.credential['access_token'])

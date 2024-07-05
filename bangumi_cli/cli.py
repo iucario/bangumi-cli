@@ -105,7 +105,9 @@ def validate_auth_config() -> Client | None:
     client.credential = credential
     token_status = client.get_auth_status()
     if token_status == 'expired':
-        client.refresh_token()
+        refresh_status = client.refresh_token()
+        if not refresh_status:
+            return None
     return client
 
 

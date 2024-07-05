@@ -102,7 +102,7 @@ def refresh_access_token(token):
 
 def get_token_status(token):
     api = 'https://bgm.tv/oauth/token_status'
-    r = requests.post(api, headers={'User-Agent': user_agent}, data={'access_token': token})
+    r = requests.post(api, headers={'User-Agent': user_agent}, params={'access_token': token})
     if r.status_code != 200:
         logger.error(r.text)
         return None
